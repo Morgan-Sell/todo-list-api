@@ -9,3 +9,4 @@ bootstrap-flask
 flask_wtf
 wtforms
 pytest-mock
+python-dotenv
