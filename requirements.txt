@@ -1,0 +1,11 @@
+isort 
+black
+ruff
+psycopg2
+pytest
+pytest-cov
+flask
+bootstrap-flask
+flask_wtf
+wtforms
+pytest-mock
