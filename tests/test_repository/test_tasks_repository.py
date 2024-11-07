@@ -52,3 +52,15 @@ def test_add_task(tasks_repository, test_db):
     assert tasks_in_db[5].description == description
     assert tasks_in_db[5].status.value == "Not Started"
     assert tasks_in_db[5].user_id == user_id
+
+
+def test_delete_tasks(tasks_repository, test_db):
+    # Action
+    tasks_repository.delete_task(task_id=3)
+
+    # Assert
+    tasks_in_db = test_db.query(Tasks).all()
+    assert len(tasks_in_db) == 4
+    # Confirm Carlton is now in index 2 b/c Will's last task was deleted
+    assert tasks_in_db[2].title == "Do the Carlton Dance"
+    assert tasks_in_db[2].user_id == 2
