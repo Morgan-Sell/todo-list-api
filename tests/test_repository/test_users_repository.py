@@ -2,6 +2,7 @@ import pytest
 
 from src.config import TaskStatus
 from src.models import Users
+from src.security import check_password_hash
 
 
 def test_find_all_users(users_repository):
@@ -36,16 +37,16 @@ def test_add_user(users_repository, test_db):
     # Arrange
     username = "Geoffrey_Butler"
     password = "whitegloves"
-    new_user = Users(username=username, password_hash=password)
 
     # Arrange
-    users_repository.add_user(new_user)
+    users_repository.add_user(username=username, password=password)
 
     # Assert
     all_users = test_db.query(Users).all()
     assert len(all_users) == 3
     assert all_users[2].username == username
-    assert all_users[2].password_hash == password
+    assert all_users[2].password_hash != password
+    assert check_password_hash(all_users[2].password_hash, password)
 
 
 def test_change_user_password(users_repository, test_db):

@@ -3,6 +3,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from src.models import Users
+from src.security import check_password_hash, generate_password_hash
 
 
 class UsersRepository:
@@ -23,10 +24,21 @@ class UsersRepository:
         # TODO: must create generate_password_hash() first
         pass
 
-    def add_user(self, user: Users):
-        self.db_session.add(user)
+    def add_user(self, username: str, password) -> bool:
+        # check if user already exists
+        if self.db_session.query(Users).filter_by(username=username).first():
+            return False
+        
+        hashed_password = generate_password_hash(password)
+        new_user = Users(username=username, password_hash=hashed_password)
+        self.db_session.add(new_user)
         self.db_session.commit()
 
     def delete_user(self, username: str, password: str) -> bool:
-        # TODO: must create authentication to ensure user is deleting themselve
-        pass
+        user = self.db_session.query(Users).filter_by(username=username).first()
+
+        if user is not None and check_password_hash(user.password_hash, password):
+            self.db_session.delete(user)
+            self.db_session.commit()
+            return True
+        return False
