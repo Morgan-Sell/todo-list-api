@@ -40,9 +40,7 @@ class Tasks(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    status = Column(
-        SQLEnum(TaskStatus), default=TaskStatus.NOT_STARTED, nullable=True
-    )
+    status = Column(SQLEnum(TaskStatus), default=TaskStatus.NOT_STARTED, nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"))
 
     # Owners is not a column.
