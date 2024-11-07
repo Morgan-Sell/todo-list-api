@@ -11,3 +11,4 @@ wtforms
 pytest-mock
 python-dotenv
 SQLAlchemy
+bcrypt

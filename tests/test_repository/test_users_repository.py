@@ -30,3 +30,29 @@ def test_get_user_password(users_repository):
     # Test Case 2: User does not exist
     password = users_repository.get_user_password(username="Uncle_Phil")
     assert password is None
+
+
+def test_add_user(users_repository, test_db):
+    # Arrange
+    username = "Geoffrey_Butler"
+    password = "whitegloves"
+    new_user = Users(username=username, password_hash=password)
+
+    # Arrange
+    users_repository.add_user(new_user)
+
+    # Assert
+    all_users = test_db.query(Users).all()
+    assert len(all_users) == 3
+    assert all_users[2].username == username
+    assert all_users[2].password_hash == password
+
+
+def test_change_user_password(users_repository, test_db):
+    # TODO: create test after creating generate_password_hash()
+    pass
+
+
+def test_delete_user(users_repository, test_db):
+    # TODO: create test after creating authentication
+    pass
