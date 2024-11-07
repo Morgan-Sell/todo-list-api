@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from src.config import TaskStatus
 from src.models import Base, Tasks, Users
 from src.repository.tasks_repository import TasksRespository
+from src.repository.users_repository import UsersRepository
 
 
 @pytest.fixture(scope="function")
@@ -72,3 +73,9 @@ def test_db():
 def tasks_repository(test_db):
     """Fixture to provide a TasksRepository instance with the test database session."""
     return TasksRespository(test_db)
+
+
+@pytest.fixture(scope="function")
+def users_repository(test_db):
+    """Fixture to provide a UsersRepository instance with the test database session."""
+    return UsersRepository(test_db)

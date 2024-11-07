@@ -4,7 +4,7 @@ from src.config import TaskStatus
 from src.models import Tasks
 
 
-def test_find_all_tasks_empty(tasks_repository):
+def test_find_all_tasks(tasks_repository):
     # Action
     tasks = tasks_repository.find_all_tasks()
 
@@ -12,7 +12,7 @@ def test_find_all_tasks_empty(tasks_repository):
     assert len(tasks) == 5
 
 
-def test_find_tasks_by_user(tasks_repository, test_db):
+def test_find_tasks_by_user(tasks_repository):
     # Act
     tasks_found = tasks_repository.find_tasks_by_user(user_id=2)
 
@@ -24,7 +24,7 @@ def test_find_tasks_by_user(tasks_repository, test_db):
     assert tasks_found[1].user_id == 2
 
 
-def test_find_tasks_by_id(tasks_repository, test_db):
+def test_find_tasks_by_id(tasks_repository):
     # Act
     task_found = tasks_repository.find_task_by_id(task_id=3)
 
