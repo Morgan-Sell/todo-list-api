@@ -21,8 +21,13 @@ class UsersRepository:
         return user.password_hash if user is not None else None
 
     def change_user_password(self, username: str, new_password) -> bool:
-        # TODO: must create generate_password_hash() first
-        pass
+        user = self.db_session.query(Users).filter_by(username=username).first()
+
+        if user is not None:
+            user.password_hash = generate_password_hash(new_password)
+            self.db_session.commit()
+            return True
+        return False
 
     def add_user(self, username: str, password) -> bool:
         # check if user already exists
