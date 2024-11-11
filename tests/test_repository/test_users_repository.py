@@ -2,10 +2,10 @@ import pytest
 
 from src.config import TaskStatus
 from src.models import Users
-from src.security import check_password_hash
+from src.security import check_password_hash, generate_password_hash
 
 from unittest.mock import patch
-
+from bcrypt import hashpw, gensalt
 
 def test_find_all_users(users_repository):
     # Action
@@ -27,8 +27,9 @@ def test_find_user_by_id(users_repository):
 
 def test_get_user_password(users_repository):
     # Test Case 1: User exists
-    password = users_repository.get_user_password(username="Will_Smith")
-    assert password == "hashed_fresh_password"
+    original_password = "fresh_password"
+    hashed_password = users_repository.get_user_password(username="Will_Smith")
+    assert check_password_hash(hashed_password, original_password)
 
     # Test Case 2: User does not exist
     password = users_repository.get_user_password(username="Uncle_Phil")
@@ -66,14 +67,14 @@ def test_add_user_user_already_exists(users_repository):
 def test_delete_user(users_repository, test_db):
     # Arrange
     username = "Will_Smith"
-    password = "fresh_password"
+    password = "fresh_password"  # The plain text password we intend to "check"
 
-    # Action: mock check_password_hash b/c test_db's users' passwords are not hashed
+    # Action: mock check_password_hash due to plaintext password in test_db
     with patch("src.security.check_password_hash", return_value=True):
         result = users_repository.delete_user(username=username, password=password)
 
     # Assert
-    assert result is True # Successful deletion returns True
+    assert result is True  # Successful deletion should return True
     assert test_db.query(Users).filter_by(username=username).first() is None
 
 
@@ -82,16 +83,36 @@ def test_delete_user_wrong_password(users_repository, test_db):
     username = "Will_Smith"
     password = "wrong_password"
 
-    # Action & Assert
-    with pytest.raises(ValueError):
-        users_repository.delete_user(username=username, password=password)
+    # Action
+    result = users_repository.delete_user(username=username, password=password)
+
+    # Assert
+    assert result is False
 
 
 def test_change_user_password(users_repository, test_db):
-    # TODO: create test after creating generate_password_hash()
-    pass
+    # Arrange
+    username = "Will_Smith"
+    old_password = "hashed_fresh_password"
+    new_password = "letsgobelair"
+
+    # Action
+    result = users_repository.change_user_password(username=username, new_password=new_password)
+
+    # Assert
+    will_smith = test_db.query(Users).filter_by(username=username).first()
+    assert result is True
+    assert will_smith.password_hash != old_password
 
 
-def test_delete_user(users_repository, test_db):
-    # TODO: create test after creating authentication
-    pass
+def test_change_user_password_user_does_not_exist(users_repository, test_db):
+    # Arrange
+    username = "Snoop_Dog"
+    old_password = "hashed_fresh_password"
+    new_password = "letsgobelair"
+
+    # Action
+    result = users_repository.change_user_password(username=username, new_password=new_password)
+
+    # Assert
+    assert result is False

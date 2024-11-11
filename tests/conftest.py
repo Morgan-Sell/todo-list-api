@@ -6,6 +6,7 @@ from src.config import TaskStatus
 from src.models import Base, Tasks, Users
 from src.repository.tasks_repository import TasksRespository
 from src.repository.users_repository import UsersRepository
+from src.security import generate_password_hash
 
 
 @pytest.fixture(scope="function")
@@ -19,9 +20,9 @@ def test_db():
     db = TestingSessionLocal()
     try:
         # In West Philadelphia, born and raised...
-        will = Users(username="Will_Smith", password_hash="hashed_fresh_password")
+        will = Users(username="Will_Smith", password_hash=generate_password_hash("fresh_password"))
         carlton = Users(
-            username="Carlton_Banks", password_hash="hashed_carlton_password"
+            username="Carlton_Banks", password_hash=generate_password_hash("carlton_password")
         )
         db.add_all([will, carlton])
         db.commit()
