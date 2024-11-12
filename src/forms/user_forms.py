@@ -3,7 +3,14 @@ from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 
-class UserCreateForm(FlaskForm):
+class LogInForm(FlaskForm):
+
+    username = StringField("Username", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+class CreateUserForm(FlaskForm):
 
     username = StringField(
         "Username",
@@ -30,8 +37,3 @@ class UserCreateForm(FlaskForm):
     submit = SubmitField("Register")
 
 
-class LogInForm(FlaskForm):
-
-    username =  StringField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Submit")

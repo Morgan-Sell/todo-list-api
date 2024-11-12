@@ -7,6 +7,7 @@ from sqlalchemy import ForeignKey, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 from src.config import DB_HOST, DB_NAME, DB_PORT, TaskStatus
+from flask_login import UserMixin
 
 load_dotenv()
 username = os.getenv("DB_USER")
@@ -23,7 +24,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-class Users(Base):
+class Users(UserMixin, Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
