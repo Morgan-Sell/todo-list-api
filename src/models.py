@@ -1,13 +1,13 @@
 import os
 
 from dotenv import load_dotenv
+from flask_login import UserMixin
 from sqlalchemy import Boolean, Column
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import ForeignKey, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 from src.config import DB_HOST, DB_NAME, DB_PORT, TaskStatus
-from flask_login import UserMixin
 
 load_dotenv()
 username = os.getenv("DB_USER")

@@ -22,7 +22,7 @@ class UsersRepository:
     def get_user_password(self, username: str) -> Optional[str]:
         user = self.db_session.query(Users).filter_by(username=username).first()
         return user.password_hash if user is not None else None
-    
+
     def check_password(self, password: str, hashed_password: str) -> bool:
         return check_password_hash(hashed_password, password)
 

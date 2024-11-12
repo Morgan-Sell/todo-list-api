@@ -11,7 +11,7 @@ def create_task():
     json = request.json
     title = request.title
     description = request.description
-    user_id = request.user_id # TODO: How do I identify the user ID?
+    user_id = request.user_id  # TODO: How do I identify the user ID?
 
     if title is None or description is None:
         return jsonify({"error": "Title and description are required."}), 400
@@ -19,4 +19,3 @@ def create_task():
     with SessionLocal() as db:
         task_repo = TasksRespository(db)
         task_repo
-
