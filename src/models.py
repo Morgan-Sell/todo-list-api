@@ -12,8 +12,11 @@ from src.config import DB_HOST, DB_NAME, DB_PORT, TaskStatus
 load_dotenv()
 username = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
+db_host = os.getenv("DB_HOST")
+db_port = os.getenv("DB_PORT")
+db_name = os.getenv("DB_NAME")
 
-DATABASE_URL = f"postgresql://{username}:{password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = f"postgresql://{username}:{password}@{db_host}:{db_port}/{db_name}"
 
 engine = create_engine(DATABASE_URL)
 # Since automcocommit is false, session.commit() is required to edit the database.

@@ -18,7 +18,6 @@ function run-app {
 
 # Load environment variables from .env file
 function load-env {
-    check-api-key
     echo "Loading environment variables from .env file..."
     export $(grep -v '^\s*#' "$THIS_DIR/.env" | grep -v '^\s*$' | xargs)  # Ignores comment and blank lines
 }
@@ -44,12 +43,24 @@ function install-deps {
 
 }
 
+# Check if database exists, if not create database
+function create-db {
+    echo "Checking if '$DB_NAME' exists..."
+
+    # If database exists, return 1 and exit
+    psql -U $DB_USER -h $DB_HOST -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || \
+    # Create database if it does not already exist
+    psql -U $DB_USER -h $DB_HOST -c "CREATE DATABASE $DB_NAME"
+
+    echo "Database setup completed."
+}
+
 # Run all setup tasks after cloning the repo
 function initial-setup {
     echo "Running initial setup..."
     load-env
-    setup-venv
     install-deps
+    create-db
     echo "Initial setup completed. You're ready to go!"
 }
 
@@ -61,6 +72,7 @@ function help {
     echo "  load-env            Load environment variables from .env"
     echo "  setup-venv          Set up virtual environment"
     echo "  install-deps        Install dependencies"
+    echo "  create-db           Create PostgreSQL database"
     echo "  initial-setup       Run the initial setup after cloning"
     echo "  help                Show this help message"
 }
@@ -83,6 +95,9 @@ case "$1" in
         ;;
     install-deps)
         install-deps
+        ;;
+    create-db)
+        create-db
         ;;
     initial-setup)
         initial-setup
