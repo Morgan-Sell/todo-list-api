@@ -1,5 +1,6 @@
 import pytest
-from src.security import generate_password_hash, check_password_hash
+
+from src.security import check_password_hash, generate_password_hash
 
 
 def test_generate_password_has():
@@ -22,7 +23,9 @@ def test_check_password_hash_success():
     hashed_password = generate_password_hash(password)
 
     # Act & Assert
-    assert check_password_hash(hashed_password, password) # Should return True for matching passwords
+    assert check_password_hash(
+        hashed_password, password
+    )  # Should return True for matching passwords
 
 
 def test_check_password_hash_failure():
@@ -32,4 +35,6 @@ def test_check_password_hash_failure():
     hashed_password = generate_password_hash(password)
 
     # Act & Assert
-    assert not check_password_hash(hashed_password, wrong_password) # Should return False for non-matching passwords
+    assert not check_password_hash(
+        hashed_password, wrong_password
+    )  # Should return False for non-matching passwords

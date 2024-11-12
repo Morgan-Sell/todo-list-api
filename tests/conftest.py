@@ -1,8 +1,10 @@
 import pytest
+from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.config import TaskStatus
+from src.controllers.user_controller import user_blueprint
 from src.models import Base, Tasks, Users
 from src.repository.tasks_repository import TasksRespository
 from src.repository.users_repository import UsersRepository
@@ -20,9 +22,13 @@ def test_db():
     db = TestingSessionLocal()
     try:
         # In West Philadelphia, born and raised...
-        will = Users(username="Will_Smith", password_hash=generate_password_hash("fresh_password"))
+        will = Users(
+            username="Will_Smith",
+            password_hash=generate_password_hash("fresh_password"),
+        )
         carlton = Users(
-            username="Carlton_Banks", password_hash=generate_password_hash("carlton_password")
+            username="Carlton_Banks",
+            password_hash=generate_password_hash("carlton_password"),
         )
         db.add_all([will, carlton])
         db.commit()
@@ -80,3 +86,16 @@ def tasks_repository(test_db):
 def users_repository(test_db):
     """Fixture to provide a UsersRepository instance with the test database session."""
     return UsersRepository(test_db)
+
+
+@pytest.fixture(scope="function")
+def app():
+    app = Flask(__name__)
+    app.register_blueprint(user_blueprint)
+    app.config["TESTING"] = True
+    return app
+
+
+@pytest.fixture(scope="function")
+def client(app):
+    return app.test_client()

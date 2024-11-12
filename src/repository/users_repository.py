@@ -16,12 +16,15 @@ class UsersRepository:
     def find_user_by_id(self, user_id: int) -> Optional[Users]:
         return self.db_session.query(Users).filter_by(id=user_id).first()
 
+    def find_user_by_username(self, username: str) -> Optional[Users]:
+        return self.db_session.query(Users).filter_by(username=username).first()
+
     def get_user_password(self, username: str) -> Optional[str]:
         user = self.db_session.query(Users).filter_by(username=username).first()
         return user.password_hash if user is not None else None
 
     def change_user_password(self, username: str, new_password) -> bool:
-        user = self.db_session.query(Users).filter_by(username=username).first()
+        user = self.find_user_by_username(username=username)
 
         if user is not None:
             user.password_hash = generate_password_hash(new_password)
@@ -31,9 +34,9 @@ class UsersRepository:
 
     def add_user(self, username: str, password) -> bool:
         # check if user already exists
-        if self.db_session.query(Users).filter_by(username=username).first():
+        if self.find_user_by_username(username=username) is not None:
             return False
-        
+
         hashed_password = generate_password_hash(password)
         new_user = Users(username=username, password_hash=hashed_password)
         self.db_session.add(new_user)

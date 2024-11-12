@@ -1,11 +1,12 @@
+from unittest.mock import patch
+
 import pytest
+from bcrypt import gensalt, hashpw
 
 from src.config import TaskStatus
 from src.models import Users
 from src.security import check_password_hash, generate_password_hash
 
-from unittest.mock import patch
-from bcrypt import hashpw, gensalt
 
 def test_find_all_users(users_repository):
     # Action
@@ -97,7 +98,9 @@ def test_change_user_password(users_repository, test_db):
     new_password = "letsgobelair"
 
     # Action
-    result = users_repository.change_user_password(username=username, new_password=new_password)
+    result = users_repository.change_user_password(
+        username=username, new_password=new_password
+    )
 
     # Assert
     will_smith = test_db.query(Users).filter_by(username=username).first()
@@ -112,7 +115,9 @@ def test_change_user_password_user_does_not_exist(users_repository, test_db):
     new_password = "letsgobelair"
 
     # Action
-    result = users_repository.change_user_password(username=username, new_password=new_password)
+    result = users_repository.change_user_password(
+        username=username, new_password=new_password
+    )
 
     # Assert
     assert result is False
