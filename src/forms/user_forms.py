@@ -10,7 +10,7 @@ class LogInForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
-class CreateUserForm(FlaskForm):
+class RegisterForm(FlaskForm):
 
     username = StringField(
         "Username",

@@ -1,7 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, login_required, login_user
 
-from src.forms.user_forms import CreateUserForm, LogInForm
+from src.forms.user_forms import RegisterForm, LogInForm
 from src.models import Base, SessionLocal, Users, engine
 from src.security import generate_password_hash
 
@@ -34,12 +34,13 @@ def login():
 
         user = Users.query.filter_by(username=username).first()
 
-        if user is not None and user.check_password(password, user.password_hash):
-            login_user(user)
-            flash("Logged in successfully!", "success")
-            return redirect(url_for("dashboard"))
+        if user is None:
+            flash("That email does not exist. Please try again.", "danger")
+        elif not user.check_password(password, user.password_hash):
+            flash("Invalid password. Please try again.", "danger")
         else:
-            flash("Invalid username or password", "danger")
+            login_user(user)
+            return redirect(url_for("dashboard"))
 
     return render_template("login.html", form=form)
 
@@ -52,7 +53,7 @@ def dashboard():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    form = CreateUserForm()
+    form = RegisterForm()
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
