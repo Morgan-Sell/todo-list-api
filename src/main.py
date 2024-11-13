@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_required, login_user
 
 from src.forms.user_forms import RegisterForm, LogInForm
 from src.models import Base, SessionLocal, Users, engine
+from src.repository.users_repository import UsersRepository
 from src.security import generate_password_hash
 
 app = Flask(__name__, static_folder="../static", template_folder="../templates")
@@ -20,7 +21,11 @@ Base.metadata.create_all(bind=engine)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    session = SessionLocal()
+    user_repo = UsersRepository(session)
+    user = user_repo.find_user_by_id(user_id)
+    session.close()
+    return user
 
 
 @app.route("/")
@@ -32,14 +37,20 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        user = Users.query.filter_by(username=username).first()
+        print("Form submitted with:", username, password)
+        session = SessionLocal()
+        user_repo = UsersRepository(session)
+        user = user_repo.find_user_by_username(username)
 
         if user is None:
+            session.close()
             flash("That email does not exist. Please try again.", "danger")
-        elif not user.check_password(password, user.password_hash):
+        elif not user_repo.check_password(password, user.password_hash):
+            session.close()
             flash("Invalid password. Please try again.", "danger")
         else:
             login_user(user)
+            session.close()
             return redirect(url_for("dashboard"))
 
     return render_template("login.html", form=form)
@@ -60,24 +71,19 @@ def register():
 
         # create a database session
         session = SessionLocal()
-        try:
-            # check if user already exists
-            if session.query(Users).filter_by(username=username).first() is not None:
-                flash(
-                    "Username already exists. Please choose a different one.", "danger"
-                )
-                return redirect(url_for("register"))
+        user_repo = UsersRepository(session)
 
-            hashed_password = generate_password_hash(password)
-            new_user = Users(username=username, password_hash=hashed_password)
-            session.add(new_user)
-            session.commit()
-
-            flash("Account successfully created. You can now log in.", "success")
-            return redirect(url_for("login"))
-
-        finally:
+        if user_repo.find_user_by_username(username) is not None:
+            flash(
+                "Username already exists. Please choose a different one.", "danger"
+            )
             session.close()
+            return redirect(url_for("register"))
+
+        user_repo.add_user(username, password)
+        session.close()
+        flash("Account successfully created. You can now log in.", "success")
+        return redirect(url_for("login"))
 
     return render_template("register.html", form=form)
 
