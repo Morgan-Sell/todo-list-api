@@ -22,3 +22,59 @@ body {
 .text-muted {
     text-decoration: line-through;
 }
+
+
+/* Table Sytling */
+.table-container {
+    background-color: #ffffff; /* Fully opaque white background */
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 80%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading Style */
+.table-heading {
+    color: #5a6b7a; /* Softer color to match background */
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Georgia', serif; /* Creative font for heading */
+}
+
+/* Styled Table */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px;
+    text-align: left;
+    font-family: 'Georgia', serif; /* Apply a creative font to match heading */
+}
+
+/* Column Header Style */
+.styled-table th {
+    background-color: #7ca78b; /* Soft green matching the background */
+    color: #ffffff; /* White text for contrast */
+    font-weight: bold;
+    font-size: 1.2rem; /* Larger font for headers */
+    text-transform: uppercase; /* Make header text uppercase for emphasis */
+}
+
+/* Table Rows */
+.styled-table tr:nth-child(even) {
+    background-color: #f7f7f7; /* Light gray for even rows */
+}
+
+.styled-table tr:nth-child(odd) {
+    background-color: #ffffff; /* White for odd rows */
+}
+
+.styled-table tr:hover {
+    background-color: #e0e0e0; /* Soft hover effect */
+}

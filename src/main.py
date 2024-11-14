@@ -4,6 +4,7 @@ from flask_login import LoginManager, login_required, login_user
 from src.forms.user_forms import RegisterForm, LogInForm
 from src.models import Base, SessionLocal, Users, engine
 from src.repository.users_repository import UsersRepository
+from src.repository.tasks_repository import TasksRespository
 from src.security import generate_password_hash
 
 app = Flask(__name__, static_folder="../static", template_folder="../templates")
@@ -86,6 +87,16 @@ def register():
         return redirect(url_for("login"))
 
     return render_template("register.html", form=form)
+
+
+@app.route("/tasks/<int:user_id>")
+@login_required
+def view_tasks(user_id):
+    session = SessionLocal()
+    task_repo = TasksRespository(session)
+    tasks = task_repo.find_tasks_by_user(user_id)
+    session.close()
+    return render_template("view_tasks.html", tasks=tasks)
 
 
 if __name__ == "__main__":
