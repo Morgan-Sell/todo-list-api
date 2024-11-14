@@ -78,3 +78,7 @@ body {
 .styled-table tr:hover {
     background-color: #e0e0e0; /* Soft hover effect */
 }
+
+.btn-thin {
+    padding: 8px 30px;
+}

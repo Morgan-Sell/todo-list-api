@@ -1,8 +1,9 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, login_required, login_user
 
+from src.forms.task_form import AddTaskForm
 from src.forms.user_forms import RegisterForm, LogInForm
-from src.models import Base, SessionLocal, Users, engine
+from src.models import Base, SessionLocal, Tasks, Users, engine
 from src.repository.users_repository import UsersRepository
 from src.repository.tasks_repository import TasksRespository
 from src.security import generate_password_hash
@@ -97,6 +98,43 @@ def view_tasks(user_id):
     tasks = task_repo.find_tasks_by_user(user_id)
     session.close()
     return render_template("view_tasks.html", tasks=tasks)
+
+
+@app.route("/add_task/<int:user_id>", methods=["GET", "POST"])
+@login_required
+def add_task(user_id):
+    
+    # Print to confirm function entry
+    print("Entered add_task function")
+
+    # Print user_id to confirm the URL parameter is being received correctly
+    print(f"Received user_id: {user_id}")
+    
+    
+    form = AddTaskForm()
+
+    if form.validate_on_submit():
+
+        print("Form was submitted and validated successfully")
+
+
+        title = form.title.data
+        description = form.description.data
+        status = form.status.data
+        print(f"Form Data - Title: {title}, Description: {description}, Status: {status}")
+
+
+        session = SessionLocal()
+        task_repo = TasksRespository(session)
+
+        task = Tasks(title=title, description=description, status=status, user_id=user_id)
+        task_repo.add_task(task)
+        session.close()
+
+        flash("Task successfully created.", "success")
+        return redirect(url_for("view_tasks", user_id=user_id))
+
+    return render_template("add_task.html", form=form, user_id=user_id)
 
 
 if __name__ == "__main__":
