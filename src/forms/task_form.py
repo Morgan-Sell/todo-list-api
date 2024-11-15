@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, IntegerField
+from wtforms import IntegerField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
 
-from src.config import TASK_STATUS_LIST, EDIT_TASK_STATUS_LIST
+from src.config import EDIT_TASK_STATUS_LIST, TASK_STATUS_LIST
 
 
 class AddTaskForm(FlaskForm):

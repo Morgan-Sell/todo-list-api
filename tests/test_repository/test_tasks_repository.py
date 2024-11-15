@@ -40,7 +40,9 @@ def test_add_task(tasks_repository, test_db):
     title = "Pick apples"
     description = "Ride trailor to the apple orchard with Jen. Remember the baskets."
     user_id = 42
-    new_task = Tasks(title=title, description=description, user_id=user_id, status="Not Started")
+    new_task = Tasks(
+        title=title, description=description, user_id=user_id, status="Not Started"
+    )
 
     # Action
     tasks_repository.add_task(new_task)
@@ -109,3 +111,37 @@ def test_edit_task_status(tasks_repository, test_db):
     assert updated_task.title == "Catch a cab"
     assert updated_task.description == "Take a cab to Bel-Air"
     assert updated_task.status == "Completed"
+
+
+def test_edit_tasks_two_changes(tasks_repository, test_db):
+    # Arrange
+    task = tasks_repository.find_task_by_id(4)
+    new_title = "Perfect the Carlton Dance"
+    new_status = "Completed"
+
+    # Action
+    tasks_repository.edit_task(task_id=task.id, title=new_title, status=new_status)
+
+    # Assert
+    updated_task = tasks_repository.find_task_by_id(task.id)
+    assert updated_task.title == new_title
+    assert updated_task.description == "Dance like no one's watching"
+    assert updated_task.status == new_status
+
+
+def test_edit_tasks_no_changes(tasks_repository, test_db):
+    # Arrange
+    task = tasks_repository.find_task_by_id(5)
+    new_title = ""
+    new_description = ""
+
+    # Action
+    tasks_repository.edit_task(
+        task_id=task.id, title=new_title, description=new_description
+    )
+
+    # Verify that no fields were changed
+    unchanged_task = tasks_repository.find_task_by_id(task.id)
+    assert unchanged_task.title == "Argue with Will"
+    assert unchanged_task.description == "Friendly banter with Will"
+    assert unchanged_task.status == "Not Started"

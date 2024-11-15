@@ -20,7 +20,7 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ url_for('view_tasks', user_id=current_user.id) }}">View Tasks</a>
                             <a class="dropdown-item" href="{{ url_for('add_task', user_id=current_user.id) }}">Add Task</a>
-                            <!-- TODO: Add edit task  -->
+                            <a class="dropdown-item" href="{{ url_for('edit_task', user_id=current_user.id) }}">Edit Task</a>
                             <!-- TODO: Add delete task  -->
                             <!-- TODO: Change password  -->
                         </div>
@@ -33,10 +33,17 @@
     </nav>
 
     <div class="container mt-4">
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="alert alert-info" role="alert">
-                    {{ messages[0] }}
+                <div>
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}

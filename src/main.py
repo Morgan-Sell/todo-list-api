@@ -2,10 +2,10 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, login_required, login_user
 
 from src.forms.task_form import AddTaskForm, EditTaskForm
-from src.forms.user_forms import RegisterForm, LogInForm
+from src.forms.user_forms import LogInForm, RegisterForm
 from src.models import Base, SessionLocal, Tasks, Users, engine
-from src.repository.users_repository import UsersRepository
 from src.repository.tasks_repository import TasksRespository
+from src.repository.users_repository import UsersRepository
 from src.security import generate_password_hash
 
 app = Flask(__name__, static_folder="../static", template_folder="../templates")
@@ -129,16 +129,19 @@ def edit_task(user_id):
     form = EditTaskForm()
 
     if form.validate_on_submit():
+        # gather data from the form
         task_id = form.id.data
-        title = form.title.data
-        description = form.description.data
-        status = form.status.data
+        new_title = form.title.data or None  # Convert blank to None
+        new_description = form.description.data or None  # Convert blank to None
+        new_status = form.status.data or None  # Convert blank to None
 
+        # initiate DB and collect relevant data
         session = SessionLocal()
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
 
+        # Check is username has access to the selected task
         if task_id not in all_ids:
             flash(
                 f"Task # {task_id} is not associated with this user. Enter another task ID.",
@@ -146,6 +149,18 @@ def edit_task(user_id):
             )
             session.close()
             return redirect(url_for("edit_task", user_id=user_id))
+
+        # User is able to edit task
+        task_repo.edit_task(
+            task_id=task_id,
+            title=new_title,
+            description=new_description,
+            status=new_status,
+        )
+        flash("Task successfully created.", "success")
+        return redirect(url_for("view_tasks", user_id=user_id))
+
+    return render_template("edit_task.html", form=form, user_id=user_id)
 
 
 if __name__ == "__main__":

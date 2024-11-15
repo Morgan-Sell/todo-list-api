@@ -7,7 +7,7 @@ from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import ForeignKey, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-from src.config import TaskStatus, TASK_STATUS_LIST
+from src.config import TASK_STATUS_LIST, TaskStatus
 
 load_dotenv()
 username = os.getenv("DB_USER")
