@@ -44,6 +44,7 @@ def login():
         user_repo = UsersRepository(session)
         user = user_repo.find_user_by_username(username)
 
+
         if user is None:
             session.close()
             flash("That email does not exist. Please try again.", "danger")
@@ -53,7 +54,7 @@ def login():
         else:
             login_user(user)
             session.close()
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("view_tasks", user_id=user.id))
 
     return render_template("login.html", form=form)
 

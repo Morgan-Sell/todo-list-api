@@ -7,7 +7,7 @@ from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import ForeignKey, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-from src.config import DB_HOST, DB_NAME, DB_PORT, TaskStatus
+from src.config import TaskStatus, TASK_STATUS_LIST
 
 load_dotenv()
 username = os.getenv("DB_USER")
@@ -44,7 +44,7 @@ class Tasks(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    status = Column(SQLEnum(TaskStatus), default=TaskStatus.NOT_STARTED, nullable=True)
+    status = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"))
 
     # Owners is not a column.

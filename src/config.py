@@ -12,4 +12,8 @@ class TaskStatus(Enum):
     COMPLETED = "Completed"
 
 
-TASK_STATUS_LIST = [status.value for status in TaskStatus]
+TASK_STATUS_LIST = [
+    "Not Started",
+    "In Progress",
+    "Completed"
+]

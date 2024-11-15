@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 
-from src.config import TaskStatus
+from src.config import TASK_STATUS_LIST
 
 
 class AddTaskForm(FlaskForm):
@@ -11,7 +11,7 @@ class AddTaskForm(FlaskForm):
     description = StringField("Description:", validators=[DataRequired()])
     status = SelectField(
         "Status:",
-        choices=[(status.value, status.value) for status in TaskStatus],
+        choices=[(status, status) for status in TASK_STATUS_LIST],
         validators=[DataRequired()]
     )
     submit = SubmitField("Create Task")
