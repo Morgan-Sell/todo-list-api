@@ -37,19 +37,19 @@ def test_db():
         task1 = Tasks(
             title="Chill out, maxin'",
             description="Relaxing after school",
-            status=TaskStatus.NOT_STARTED,
+            status="Not Started",
             user_id=will.id,
         )
         task2 = Tasks(
             title="Shoot some b-ball",
             description="Basketball with friends",
-            status=TaskStatus.IN_PROGRESS,
+            status="In Progress",
             user_id=will.id,
         )
         task3 = Tasks(
             title="Catch a cab",
             description="Take a cab to Bel-Air",
-            status=TaskStatus.COMPLETED,
+            status="Completed",
             user_id=will.id,
         )
 
@@ -57,13 +57,13 @@ def test_db():
         task4 = Tasks(
             title="Do the Carlton Dance",
             description="Dance like no one's watching",
-            status=TaskStatus.COMPLETED,
+            status="Completed",
             user_id=carlton.id,
         )
         task5 = Tasks(
             title="Argue with Will",
             description="Friendly banter with Will",
-            status=TaskStatus.NOT_STARTED,
+            status="Not Started",
             user_id=carlton.id,
         )
 

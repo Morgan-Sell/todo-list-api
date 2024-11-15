@@ -1,7 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import LoginManager, login_required, login_user
 
-from src.forms.task_form import AddTaskForm
+from src.forms.task_form import AddTaskForm, EditTaskForm
 from src.forms.user_forms import RegisterForm, LogInForm
 from src.models import Base, SessionLocal, Tasks, Users, engine
 from src.repository.users_repository import UsersRepository
@@ -44,7 +44,6 @@ def login():
         user_repo = UsersRepository(session)
         user = user_repo.find_user_by_username(username)
 
-
         if user is None:
             session.close()
             flash("That email does not exist. Please try again.", "danger")
@@ -77,9 +76,7 @@ def register():
         user_repo = UsersRepository(session)
 
         if user_repo.find_user_by_username(username) is not None:
-            flash(
-                "Username already exists. Please choose a different one.", "danger"
-            )
+            flash("Username already exists. Please choose a different one.", "danger")
             session.close()
             return redirect(url_for("register"))
 
@@ -104,31 +101,19 @@ def view_tasks(user_id):
 @app.route("/add_task/<int:user_id>", methods=["GET", "POST"])
 @login_required
 def add_task(user_id):
-    
-    # Print to confirm function entry
-    print("Entered add_task function")
-
-    # Print user_id to confirm the URL parameter is being received correctly
-    print(f"Received user_id: {user_id}")
-    
-    
     form = AddTaskForm()
 
     if form.validate_on_submit():
-
-        print("Form was submitted and validated successfully")
-
-
         title = form.title.data
         description = form.description.data
         status = form.status.data
-        print(f"Form Data - Title: {title}, Description: {description}, Status: {status}")
-
 
         session = SessionLocal()
         task_repo = TasksRespository(session)
 
-        task = Tasks(title=title, description=description, status=status, user_id=user_id)
+        task = Tasks(
+            title=title, description=description, status=status, user_id=user_id
+        )
         task_repo.add_task(task)
         session.close()
 
@@ -136,6 +121,31 @@ def add_task(user_id):
         return redirect(url_for("view_tasks", user_id=user_id))
 
     return render_template("add_task.html", form=form, user_id=user_id)
+
+
+@app.route("/edit_task/<int:user_id>", methods=["GET", "POST"])
+@login_required
+def edit_task(user_id):
+    form = EditTaskForm()
+
+    if form.validate_on_submit():
+        task_id = form.id.data
+        title = form.title.data
+        description = form.description.data
+        status = form.status.data
+
+        session = SessionLocal()
+        task_repo = TasksRespository(session)
+        tasks = task_repo.find_tasks_by_user(user_id)
+        all_ids = [task.id for task in tasks]
+
+        if task_id not in all_ids:
+            flash(
+                f"Task # {task_id} is not associated with this user. Enter another task ID.",
+                "danger",
+            )
+            session.close()
+            return redirect(url_for("edit_task", user_id=user_id))
 
 
 if __name__ == "__main__":

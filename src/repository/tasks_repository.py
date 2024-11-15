@@ -27,3 +27,21 @@ class TasksRespository:
         if task is not None:
             self.db_session.delete(task)
             self.db_session.commit()
+    
+    def edit_task(self, task_id: str, title: Optional[str] = None, description: Optional[str] = None, status: Optional[str] = None) -> None:
+        task = self.find_task_by_id(task_id)
+
+        # Check if task exists
+        if task is not None:
+            if title is not None and title.strip() != "":
+                task.title = title
+         
+            if description is not None and description.strip() != "":
+                task.description = description
+          
+            if status is not None and status.strip() != "":
+                task.status = status
+ 
+            # if none of the variables are none, then commit changes
+            if title or description or status:
+                self.db_session.commit()
