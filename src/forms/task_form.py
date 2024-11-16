@@ -27,3 +27,10 @@ class EditTaskForm(FlaskForm):
         choices=[(status, status) for status in EDIT_TASK_STATUS_LIST],
     )
     submit = SubmitField("Edit Task")
+
+
+class DeleteTaskForm(FlaskForm):
+
+    id = IntegerField("Task ID: ", validators=[DataRequired()])
+    display = SubmitField("Display Task Details")
+    submit = SubmitField("Delete Task")

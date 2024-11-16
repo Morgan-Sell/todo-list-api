@@ -1,7 +1,7 @@
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for, jsonify
 from flask_login import LoginManager, login_required, login_user
 
-from src.forms.task_form import AddTaskForm, EditTaskForm
+from src.forms.task_form import AddTaskForm, DeleteTaskForm, EditTaskForm
 from src.forms.user_forms import LogInForm, RegisterForm
 from src.models import Base, SessionLocal, Tasks, Users, engine
 from src.repository.tasks_repository import TasksRespository
@@ -162,6 +162,47 @@ def edit_task(user_id):
 
     return render_template("edit_task.html", form=form, user_id=user_id)
 
+
+@app.route("/delete_task/<int:user_id>", methods=["GET", "POST"])
+@login_required
+def delete_task(user_id):
+    form = DeleteTaskForm()
+
+    if form.validate_on_submit():
+        task_id = form.id.data
+
+        # initiate DB and collect relevant data
+        session = SessionLocal()
+        task_repo = TasksRespository(session)
+        tasks = task_repo.find_tasks_by_user(user_id)
+        all_ids = [task.id for task in tasks]
+
+        # Check if task belongs to the user
+        if task_id not in all_ids:
+            flash(f"Task # {task_id} is not associated with this user. Enter another task ID.", "danger")
+            session.close()
+            return redirect(url_for("delete_task", user_id=user_id))       
+
+
+    return render_template("delete_task.html", form=form, user_id=user_id)
+
+
+@app.route("/api/task/<int:task_id>")
+@login_required
+def get_task_details(task_id):
+    session = SessionLocal()
+    task_repo = TasksRespository(session)
+    task = task_repo.find_task_by_id(task_id)
+    session.close()
+
+    if task is not None:
+        return jsonify({
+            "title": task.title,
+            "description": task.description,
+            "status": task.status
+        })
+    else:
+        return jsonify
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

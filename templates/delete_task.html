@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Full-page background image */
+    body {
+        background-image: url("{{ url_for('static', filename='img/background.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card p-4" style="width: 700px; border-radius: 15px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+        <div class="text-center mb-4">
+            <h2 class="mt-2" style="font-family: 'Lobster', cursive; font-size: 2rem; color: #333;">Delete Task</h2>         
+        </div>
+        <form method="POST" action="{{ url_for('delete_task', user_id=user_id) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.id.label }}
+                {{ form.id(class="form-control", placeholder="Enter Task ID", id="task-id-input") }}
+            </div>
+            <div class="form-group">
+                <label for="task-title">Title:</label>
+                <p id="task-title" class="form-control" readonly></p>
+            </div>
+            <div class="form-group">
+                <label for="task-description">Description:</label>
+                <p id="task-description" class="form-control" readonly></p>
+            </div>
+            <div class="form-group">
+                <label for="task-status">Status:</label>
+                <p id="task-status" class="form-control" readonly></p>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-danger btn-thin mt-4">Delete Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("task-id-input").addEventListener("input", function () {
+        const taskId = this.value;
+
+        // Fetch task details via an API (adjust URL as needed)
+        fetch(`/api/task/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate the fields with task details
+                document.getElementById("task-title").textContent = data.title || "N/A";
+                document.getElementById("task-description").textContent = data.description || "N/A";
+                document.getElementById("task-status").textContent = data.status || "N/A";
+            })
+            .catch(() => {
+                // Clear fields if task is not found
+                document.getElementById("task-title").textContent = "";
+                document.getElementById("task-description").textContent = "";
+                document.getElementById("task-status").textContent = "";
+            });
+    });
+</script>
+{% endblock %}
