@@ -1,5 +1,5 @@
 from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
-from flask_login import LoginManager, login_required, login_user
+from flask_login import LoginManager, login_required, login_user, logout_user
 
 from src.forms.task_form import AddTaskForm, DeleteTaskForm, EditTaskForm
 from src.forms.user_forms import LogInForm, RegisterForm
@@ -56,6 +56,14 @@ def login():
             return redirect(url_for("view_tasks", user_id=user.id))
 
     return render_template("login.html", form=form)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have successfully logged out.", "info")
+    return redirect(url_for("login"))
 
 
 @app.route("/dashboard")
