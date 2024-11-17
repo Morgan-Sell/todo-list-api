@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, url_for, jsonify
+from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import LoginManager, login_required, login_user
 
 from src.forms.task_form import AddTaskForm, DeleteTaskForm, EditTaskForm
@@ -179,10 +179,12 @@ def delete_task(user_id):
 
         # Check if task belongs to the user
         if task_id not in all_ids:
-            flash(f"Task # {task_id} is not associated with this user. Enter another task ID.", "danger")
+            flash(
+                f"Task # {task_id} is not associated with this user. Enter another task ID.",
+                "danger",
+            )
             session.close()
-            return redirect(url_for("delete_task", user_id=user_id))       
-
+            return redirect(url_for("delete_task", user_id=user_id))
 
     return render_template("delete_task.html", form=form, user_id=user_id)
 
@@ -196,13 +198,19 @@ def get_task_details(task_id):
     session.close()
 
     if task is not None:
-        return jsonify({
-            "title": task.title,
-            "description": task.description,
-            "status": task.status
-        })
+        return jsonify(
+            {
+                "title": task.title,
+                "description": task.description,
+                "status": task.status,
+            }
+        )
     else:
-        return jsonify
+        return (
+            jsonify({"error": f"Task ID {task_id} does not exist for this user."}),
+            404,
+        )
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

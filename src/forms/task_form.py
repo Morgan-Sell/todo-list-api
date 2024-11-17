@@ -32,5 +32,4 @@ class EditTaskForm(FlaskForm):
 class DeleteTaskForm(FlaskForm):
 
     id = IntegerField("Task ID: ", validators=[DataRequired()])
-    display = SubmitField("Display Task Details")
     submit = SubmitField("Delete Task")

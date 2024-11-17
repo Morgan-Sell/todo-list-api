@@ -14,7 +14,11 @@
 <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
     <div class="card p-4" style="width: 700px; border-radius: 15px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
         <div class="text-center mb-4">
-            <h2 class="mt-2" style="font-family: 'Lobster', cursive; font-size: 2rem; color: #333;">Delete Task</h2>         
+            <h2 class="mt-2" style="font-family: 'Lobster', cursive; font-size: 2rem; color: #333;">Delete Task</h2>
+            <h4 class="subheader mt-2">
+                View task details before deleting. If task details display 'N/A', 
+                then the selected task is not associated with the active user.
+            </h4>         
         </div>
         <form method="POST" action="{{ url_for('delete_task', user_id=user_id) }}">
             {{ form.hidden_tag() }}

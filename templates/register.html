@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}ToDo List App - Register{% endblock %}
+{% block title %}Peak Performer - Register{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; background-color: #ffffff;">
     <div class="card p-4" style="width: 400px; border-radius: 15px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
         <div class="text-center mb-4">
-            <h2 class="mt-2" style="font-family: 'Brush Script MT', cursive; font-size: 2.5rem; color: #333;">ToDo List App</h2>         
-            <img src="{{ url_for('static', filename='img/to_do_list.png') }}" alt="ToDo List Icon" width="70">
+            <h2 class="mt-2" style="font-family: 'Brush Script MT', cursive; font-size: 2.5rem; color: #333;">Peak Performer</h2>         
+            <img src="{{ url_for('static', filename='img/climb.png') }}" alt="Climber Icon" width="70">
         </div>
         <form method="POST" action="{{ url_for('register') }}">
             {{ form.hidden_tag() }}
@@ -36,6 +36,9 @@
                 Already have an account? <a href="{{ url_for('login') }}">Login</a>
             </p>
         </form>
+        <p class="text-center mt-4" style="font-size: 0.9rem; color: #888;">
+            Because you're always on top of the mountain (or at least your todo list).
+        </p>
     </div>
 </div>
 {% endblock %}

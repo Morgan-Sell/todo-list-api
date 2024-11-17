@@ -82,3 +82,14 @@ body {
 .btn-thin {
     padding: 8px 30px;
 }
+
+h4.subheader {
+    font-family: 'Roboto', italic;
+    font-size: 1rem;
+    color: #666;
+    text-align: center;
+    margin: 10px 0 0px;
+    max-width: 500px; /* Limit line width for balanced text wrapping */
+    margin-left: auto; /* Center align */
+    margin-right: auto;
+}
