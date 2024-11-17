@@ -20,7 +20,7 @@
                 then the selected task is not associated with the active user.
             </h4>         
         </div>
-        <form method="POST" action="{{ url_for('delete_task', user_id=user_id) }}">
+        <form method="POST" action="{{ url_for('tasks.delete_task', user_id=user_id) }}">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {{ form.id.label }}
@@ -50,7 +50,7 @@
         const taskId = this.value;
 
         // Fetch task details via an API (adjust URL as needed)
-        fetch(`/api/task/${taskId}`)
+        fetch(`/tasks/api/${taskId}`)
             .then(response => response.json())
             .then(data => {
                 // Populate the fields with task details

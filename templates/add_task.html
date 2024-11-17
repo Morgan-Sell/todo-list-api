@@ -16,7 +16,7 @@
         <div class="text-center mb-4">
             <h2 class="mt-2" style="font-family: 'Lobster', cursive; font-size: 2rem; color: #333;">Add a Task to Your ToDo List</h2>         
         </div>
-        <form method="POST" action="{{ url_for('add_task', user_id=user_id) }}">
+        <form method="POST" action="{{ url_for('tasks.add_task', user_id=user_id) }}">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {{ form.title.label }}

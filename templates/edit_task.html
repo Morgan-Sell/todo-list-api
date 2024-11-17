@@ -16,7 +16,7 @@
         <div class="text-center mb-4">
             <h2 class="mt-2" style="font-family: 'Lobster', cursive; font-size: 2rem; color: #333;">Edit Your Task</h2>         
         </div>
-        <form method="POST" action="{{ url_for('edit_task', user_id=user_id) }}">
+        <form method="POST" action="{{ url_for('tasks.edit_task', user_id=user_id) }}">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {{ form.id.label }}
