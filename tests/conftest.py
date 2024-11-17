@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.config import TaskStatus
-from src.controllers.user_controller import user_blueprint
+from src.controllers.auth_controller import auth_blueprint
 from src.models import Base, Tasks, Users
 from src.repository.tasks_repository import TasksRespository
 from src.repository.users_repository import UsersRepository
@@ -91,7 +91,7 @@ def users_repository(test_db):
 @pytest.fixture(scope="function")
 def app():
     app = Flask(__name__)
-    app.register_blueprint(user_blueprint)
+    app.register_blueprint(auth_blueprint)
     app.config["TESTING"] = True
     return app
 

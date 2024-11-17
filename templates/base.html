@@ -9,7 +9,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('login') }}">Peak Performer</a>
+        <a class="navbar-brand" href="{{ url_for('auth.login') }}">Peak Performer</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ml-auto">
                 {% if current_user.is_authenticated %}
@@ -23,11 +23,11 @@
                             <a class="dropdown-item" href="{{ url_for('tasks.edit_task', user_id=current_user.id) }}">Edit Task</a>
                             <a class="dropdown-item" href="{{ url_for('tasks.delete_task', user_id=current_user.id) }}">Delete Task</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Log Out</a>
+                            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">Log Out</a>
                         </div>
                     </li>
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
                 {% endif %}
             </ul>
         </div>

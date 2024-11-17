@@ -1,12 +1,10 @@
-from flask import Flask, flash, redirect, render_template, url_for
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask import Flask, redirect, url_for
+from flask_login import LoginManager
 
-from src.forms.user_forms import LogInForm, RegisterForm
-from src.models import Base, SessionLocal, Tasks, Users, engine
-from src.repository.tasks_repository import TasksRespository
-from src.repository.users_repository import UsersRepository
-
+from src.controllers.auth_controller import auth_blueprint
 from src.controllers.tasks_controller import tasks_blueprint
+from src.models import Base, SessionLocal, engine
+from src.repository.users_repository import UsersRepository
 
 app = Flask(__name__, static_folder="../static", template_folder="../templates")
 app.config["SECRET_KEY"] = "shhhh_dont_tell_anyone"
@@ -20,8 +18,18 @@ login_manager.login_view = "login"
 # Ensure tables are created
 Base.metadata.create_all(bind=engine)
 
-# Register blueprints to for tasks and users controllers
+# Register blueprints to for tasks and authentication controllers
+app.register_blueprint(auth_blueprint, url_prefix="/auth")
 app.register_blueprint(tasks_blueprint, url_prefix="/tasks")
+
+
+@app.route("/")
+def root():
+    """
+    Redirects the root URL - http://127.0.0.1:5001 - to the login page.
+    """
+    return redirect(url_for("auth.login"))
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,66 +38,6 @@ def load_user(user_id):
     user = user_repo.find_user_by_id(user_id)
     session.close()
     return user
-
-
-@app.route("/")
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    form = LogInForm()
-
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-
-        print("Form submitted with:", username, password)
-        session = SessionLocal()
-        user_repo = UsersRepository(session)
-        user = user_repo.find_user_by_username(username)
-
-        if user is None:
-            session.close()
-            flash("That email does not exist. Please try again.", "danger")
-        elif not user_repo.check_password(password, user.password_hash):
-            session.close()
-            flash("Invalid password. Please try again.", "danger")
-        else:
-            login_user(user)
-            session.close()
-            return redirect(url_for("tasks.view_tasks", user_id=user.id))
-
-    return render_template("login.html", form=form)
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    flash("You have successfully logged out.", "info")
-    return redirect(url_for("login"))
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-
-        # create a database session
-        session = SessionLocal()
-        user_repo = UsersRepository(session)
-
-        if user_repo.find_user_by_username(username) is not None:
-            flash("Username already exists. Please choose a different one.", "danger")
-            session.close()
-            return redirect(url_for("register"))
-
-        user_repo.add_user(username, password)
-        session.close()
-        flash("Account successfully created. You can now log in.", "success")
-        return redirect(url_for("login"))
-
-    return render_template("register.html", form=form)
 
 
 if __name__ == "__main__":
