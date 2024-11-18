@@ -140,3 +140,32 @@ def test_logout_protected_route_after_logout(client, app, users_repository):
             )
             assert response.status_code == 200
             assert b"LOGIN" in protect_response.data
+
+
+# -- REGISTER TEST CASES --
+def test_register_page_loads(client, app):
+    with app.app_context():
+        response = client.get(url_for("auth.register"))
+        assert response.status_code == 200
+        assert b"SIGN UP" in response.data
+
+
+def test_register_valid_data(client, app, users_repository):
+    with app.app_context():
+        new_user = "Uncle_Phil"
+        new_password = "willlllll"
+        response = client.post(
+            url_for("auth.register"),
+            data={"username": new_user, "password": new_password},
+            follow_redirects=True,
+        )
+
+        print(response.data.decode())
+        # Assert: Registration was successful
+        assert response.status_code == 200
+        assert b"Account successfully created. You can now log in." in response.data
+
+        # Assert: New user exists in the database
+        user = users_repository.find_user_by_username(new_user)
+        assert user is not None
+        assert check_password_hash(user.password_hash, new_password)

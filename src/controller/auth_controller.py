@@ -51,8 +51,8 @@ def register():
         username = form.username.data
         password = form.password.data
 
-        # create a database session
-        session = SessionLocal()
+        # Enables connection to different databases, e.g., test & prod
+        session = current_app.session
         user_repo = UsersRepository(session)
 
         if user_repo.find_user_by_username(username) is not None:
