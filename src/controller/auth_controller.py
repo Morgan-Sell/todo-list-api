@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, url_for, current_app
+from flask import Blueprint, current_app, flash, redirect, render_template, url_for
 from flask_login import login_required, login_user, logout_user
 
 from src.forms.user_forms import LogInForm, RegisterForm
@@ -16,7 +16,7 @@ def login():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        
+
         # Enables connection to different databases, e.g., test & prod
         session = current_app.session
         user_repo = UsersRepository(session)

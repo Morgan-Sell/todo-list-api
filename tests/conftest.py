@@ -1,18 +1,18 @@
 import pytest
 from flask import Flask
+from flask.testing import FlaskClient
+from flask_login import AnonymousUserMixin, LoginManager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.config import TaskStatus
 from src.controller.auth_controller import auth_blueprint
+from src.controller.tasks_controller import tasks_blueprint
 from src.models import Base, Tasks, Users
 from src.repository.tasks_repository import TasksRespository
 from src.repository.users_repository import UsersRepository
 from src.security import generate_password_hash
 
-from flask_login import LoginManager, AnonymousUserMixin
-from src.controller.tasks_controller import tasks_blueprint
-from flask.testing import FlaskClient
 
 @pytest.fixture(scope="function")
 def test_db():
@@ -99,14 +99,14 @@ def app(test_db):
     app.config["APPLICATION_ROOT"] = "/"
     app.config["SECRET_KEY"] = "shhhh_dont_tell_anyone"
     app.config["WTF_CSRF_ENABLED"] = False
-    
+
     # Attach test_db session for testing
     app.session = test_db
-    
+
     # Initialize Flask-login
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = "login"
+    login_manager.login_view = "auth.login"
 
     # Enable the loading of users during the test
     @login_manager.user_loader
