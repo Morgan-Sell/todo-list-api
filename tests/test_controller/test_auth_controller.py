@@ -43,3 +43,45 @@ def test_login_valid_credentails(client, app):
         response_path = urlparse(response.location).path
         expected_path = url_for("tasks.view_tasks", user_id=1, _external=False)
         assert response_path == expected_path
+
+
+def test_login_invalid_username(client, app):
+    with app.app_context():
+        response = client.post(
+            url_for("auth.login"),
+            data={"username": "Jazz", "password": "CrushinOnHillary"},
+            follow_redirects=True,
+        )
+
+        # Assert the login page is returned
+        assert response.status_code == 200
+        assert b"That username does not exist. Please try again." in response.data
+        assert b"LOGIN" in response.data
+
+
+def test_login_invalid_password(client, app):
+    with app.app_context():
+        response = client.post(
+            url_for("auth.login"),
+            data={"username": "Will_Smith", "password": "wrong_password"},
+            follow_redirects=True,
+        )
+
+        print(response.data.decode())
+        # Assert the login page is returned
+        assert response.status_code == 200
+        assert b"Invalid password. Please try again." in response.data
+        assert b"LOGIN" in response.data
+
+
+def test_login_form_validation(client, app):
+    with app.app_context():
+        response = client.post(
+            url_for("auth.login"),
+            data={"username": "", "password": ""},
+            follow_redirects=True,
+        )
+
+        # Assert that validation errors are displayed
+        assert response.status_code == 200
+        assert b"Because you're always on top of the mountain (or at least your to-do list)" in response.data

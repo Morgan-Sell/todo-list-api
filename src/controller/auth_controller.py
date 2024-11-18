@@ -24,7 +24,7 @@ def login():
 
         if user is None:
             session.close()
-            flash("That email does not exist. Please try again.", "danger")
+            flash("That username does not exist. Please try again.", "danger")
         elif not user_repo.check_password(password, user.password_hash):
             session.close()
             flash("Invalid password. Please try again.", "danger")
