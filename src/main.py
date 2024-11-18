@@ -1,13 +1,14 @@
 from flask import Flask, redirect, url_for
 from flask_login import LoginManager
 
-from src.controllers.auth_controller import auth_blueprint
-from src.controllers.tasks_controller import tasks_blueprint
+from src.controller.auth_controller import auth_blueprint
+from src.controller.tasks_controller import tasks_blueprint
 from src.models import Base, SessionLocal, engine
 from src.repository.users_repository import UsersRepository
 
 app = Flask(__name__, static_folder="../static", template_folder="../templates")
 app.config["SECRET_KEY"] = "shhhh_dont_tell_anyone"
+app.session = SessionLocal()
 
 login_manager = LoginManager()
 login_manager.init_app(app)

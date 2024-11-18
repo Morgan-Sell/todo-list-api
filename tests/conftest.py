@@ -4,12 +4,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.config import TaskStatus
-from src.controllers.auth_controller import auth_blueprint
+from src.controller.auth_controller import auth_blueprint
 from src.models import Base, Tasks, Users
 from src.repository.tasks_repository import TasksRespository
 from src.repository.users_repository import UsersRepository
 from src.security import generate_password_hash
 
+from flask_login import LoginManager, AnonymousUserMixin
+from src.controller.tasks_controller import tasks_blueprint
+from flask.testing import FlaskClient
 
 @pytest.fixture(scope="function")
 def test_db():
@@ -89,13 +92,42 @@ def users_repository(test_db):
 
 
 @pytest.fixture(scope="function")
-def app():
-    app = Flask(__name__)
-    app.register_blueprint(auth_blueprint)
+def app(test_db):
+    app = Flask(__name__, static_folder="../static", template_folder="../templates")
     app.config["TESTING"] = True
+    app.config["SERVER_NAME"] = "localhost"
+    app.config["APPLICATION_ROOT"] = "/"
+    app.config["SECRET_KEY"] = "shhhh_dont_tell_anyone"
+    app.config["WTF_CSRF_ENABLED"] = False
+    
+    # Attach test_db session for testing
+    app.session = test_db
+    
+    # Initialize Flask-login
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = "login"
+
+    # Enable the loading of users during the test
+    @login_manager.user_loader
+    def load_user(user_id):
+        session = test_db
+        user_repo = UsersRepository(session)
+        return user_repo.find_user_by_id(user_id)
+
+    # Register blueprints
+    app.register_blueprint(auth_blueprint)
+    app.register_blueprint(tasks_blueprint)
+
     return app
 
 
 @pytest.fixture(scope="function")
 def client(app):
-    return app.test_client()
+    # Enables simulation of client requests in Flask for testing
+    app.test_client_class = FlaskClient
+    client = app.test_client()
+
+    # Set 'current_user' to anonymous user if no user is logged in
+    app.jinja_env.globals["current_user"] = AnonymousUserMixin()
+    return client
