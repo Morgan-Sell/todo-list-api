@@ -38,7 +38,7 @@ def test_db():
 
         # Will's tasks
         task1 = Tasks(
-            title="Chill out, maxin'",
+            title="Chill out, maxin",
             description="Relaxing after school",
             status="Not Started",
             user_id=will.id,

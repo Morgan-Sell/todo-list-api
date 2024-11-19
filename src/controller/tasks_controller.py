@@ -1,4 +1,12 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from src.forms.task_form import AddTaskForm, DeleteTaskForm, EditTaskForm
@@ -11,10 +19,11 @@ tasks_blueprint = Blueprint("tasks", __name__)
 @tasks_blueprint.route("/<int:user_id>", methods=["GET", "POST"])
 @login_required
 def view_tasks(user_id):
-    session = SessionLocal()
+    session = current_app.session
     task_repo = TasksRespository(session)
     tasks = task_repo.find_tasks_by_user(user_id)
     session.close()
+    print("Tasks:", tasks)
     return render_template("view_tasks.html", tasks=tasks)
 
 
@@ -28,7 +37,8 @@ def add_task(user_id):
         description = form.description.data
         status = form.status.data
 
-        session = SessionLocal()
+        # Use database connection that is currently being handled by the Flask app, i.e. test and prod
+        session = current_app.session
         task_repo = TasksRespository(session)
 
         task = Tasks(
@@ -55,8 +65,8 @@ def edit_task(user_id):
         new_description = form.description.data or None  # Convert blank to None
         new_status = form.status.data or None  # Convert blank to None
 
-        # initiate DB and collect relevant data
-        session = SessionLocal()
+        # Use database connection that is currently being handled by the Flask app, i.e. test and prod
+        session = current_app.session
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
@@ -91,8 +101,8 @@ def delete_task(user_id):
     if form.validate_on_submit():
         task_id = form.id.data
 
-        # initiate DB and collect relevant data
-        session = SessionLocal()
+        # Use database connection that is currently being handled by the Flask app, i.e. test and prod
+        session = current_app.session
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
@@ -112,7 +122,8 @@ def delete_task(user_id):
 @tasks_blueprint.route("/api/<int:task_id>")
 @login_required
 def get_task_details(task_id):
-    session = SessionLocal()
+    # Use database connection that is currently being handled by the Flask app, i.e. test and prod
+    session = current_app.session
     task_repo = TasksRespository(session)
     task = task_repo.find_task_by_id(task_id)
     session.close()

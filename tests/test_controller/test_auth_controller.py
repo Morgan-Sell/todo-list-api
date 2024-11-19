@@ -2,11 +2,8 @@ from unittest.mock import MagicMock, patch
 from urllib.parse import urlparse
 
 from flask import url_for
-from flask_login import login_user
 
-from src.models import Tasks, Users
-from src.repository.users_repository import UsersRepository
-from src.security import check_password_hash, generate_password_hash
+from src.security import check_password_hash
 
 
 # -- LOGIN TEST CASES --
