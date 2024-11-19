@@ -156,11 +156,14 @@ def test_register_valid_data(client, app, users_repository):
         new_password = "willlllll"
         response = client.post(
             url_for("auth.register"),
-            data={"username": new_user, "password": new_password},
+            data={
+                "username": new_user,
+                "password": new_password,
+                "confirm_password": new_password,
+            },
             follow_redirects=True,
         )
 
-        print(response.data.decode())
         # Assert: Registration was successful
         assert response.status_code == 200
         assert b"Account successfully created. You can now log in." in response.data
@@ -169,3 +172,85 @@ def test_register_valid_data(client, app, users_repository):
         user = users_repository.find_user_by_username(new_user)
         assert user is not None
         assert check_password_hash(user.password_hash, new_password)
+
+
+def test_register_existing_username(client, app, users_repository):
+    with app.app_context():
+        existing_user = "Will_Smith"
+        existing_password = "fresh_password"
+
+        response = client.post(
+            url_for("auth.register"),
+            data={
+                "username": existing_user,
+                "password": existing_password,
+                "confirm_password": existing_password,
+            },
+            follow_redirects=True,
+        )
+
+        # Assert: Registration failed due to existing username
+        assert response.status_code == 200
+        assert (
+            b"Username already exists. Please choose a different one." in response.data
+        )
+
+        # Assert: Ensure the database remains unchanged
+        user = users_repository.find_user_by_username(existing_user)
+        assert user is not None
+
+
+def test_register_password_mismatch(client, app):
+    with app.app_context():
+        new_user = "Geoffrey"
+        new_password = "best_butler_eva"
+        mismatched_password = "slap_will"
+
+        response = client.post(
+            url_for("auth.register"),
+            data={
+                "username": new_user,
+                "password": new_password,
+                "confirm_password": mismatched_password,
+            },
+            follow_redirects=True,
+        )
+
+        # Assert: Registration failed due to mismatched passwords
+        assert response.status_code == 200
+        assert b"Passwords must match." in response.data
+
+
+def test_register_empty_fields(client, app):
+    with app.app_context():
+        response = client.post(
+            url_for("auth.register"),
+            data={"username": "", "password": "", "confirm_password": ""},
+            follow_redirects=True,
+        )
+
+        # Assert: Registration failed due to empty fields
+        assert response.status_code == 200
+        assert b"This field is required." in response.data
+
+
+def test_register_redirect_to_login(client, app, users_repository):
+    with app.app_context():
+        new_user = "Aunt_Viv"
+        new_password = "belairqueen"
+
+        response = client.post(
+            url_for("auth.register"),
+            data={
+                "username": new_user,
+                "password": new_password,
+                "confirm_password": new_password,
+            },
+            follow_redirects=False,
+        )
+
+        # Assert: Redirect to login page
+        assert response.status_code == 302
+        assert urlparse(response.location).path == url_for(
+            "auth.login", _external=False
+        )
