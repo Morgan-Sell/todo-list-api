@@ -35,7 +35,8 @@ class Users(UserMixin, Base):
     password_hash = Column(String, nullable=False)
 
     # tasks is not a column. Enables access at the ORM level.
-    tasks = relationship("Tasks", back_populates="owners")
+    # lazy=joined tasks is immediately loaded when Users is queried
+    tasks = relationship("Tasks", back_populates="owners", lazy="joined")
 
 
 class Tasks(Base):
