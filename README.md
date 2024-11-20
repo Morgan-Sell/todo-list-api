@@ -18,8 +18,8 @@ Peak Performer is a simple yet robust to-do list application designed to keep yo
 - [Dependencies](#dependencies)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
-- [Contributors](#contributors)
 - [License](#license)
+- [Acknowledgement](#acknowledgement)
 
 ## Features
 
@@ -156,3 +156,6 @@ _Source: Geeks for Geeks_
 
 ## License
 This project is licensed under the MIT License. See `LICENSE` for details.
+
+## Acknowledgement
+Peak Performer was in response to [roadmap.sh's Todo List API project](https://roadmap.sh/projects/todo-list-api).
