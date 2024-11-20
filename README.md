@@ -1,6 +1,6 @@
 # Peak Performer
 
-**Tagline**: Because you're always on top of the mountain (or at least your to-do list).
+*Because you're always on top of the mountain (or at least your to-do list).*
 
 ## Introduction
 
@@ -50,7 +50,7 @@ Peak Performer is a simple yet robust to-do list application designed to keep yo
 
 ## Usage
 
-Access the application in your browser at `http://127.0.0.1:5001`
+Access the application in your browser at `http://127.0.0.1:5001`.
 
 ### How to Use the App
 
