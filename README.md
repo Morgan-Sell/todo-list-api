@@ -114,16 +114,30 @@ Access the application in your browser at `http://127.0.0.1:5001`
   - Route handling and logic in `auth_controller.py` and `tasks_controller.py`.
 
 #### Benefits:
-- Clear separation of concerns.
-- Improved maintainability and scalability.
-  
-## Repository Design Pattern
+  - **Separation of Concerns:** Each component (Model, View, Controller) handles a distinct responsibility, avoiding overlap and reducing complexity.
+  - **Improved Maintainability:** Changes to one layer (e.g., UI updates in the View) have minimal impact on others (e.g., Model or Controller).
+  - **Scalability:** Enables the application to grow by adding new features or modules without disrupting existing functionality.
+  - **Parallel Development:** Different teams can work on the UI, business logic, and database layers independently.
+
+### MVC Design Pattern Visualization
+
+<p align="center">
+    <img src="./static/img/mvc.png" alt="MVC"/>
+</p>
+
+_Source: Geeks for Geeks_
+
+### Repository Design Pattern
 - **Repositories:**
   - `UsersRepository`: Handles CRUD operations for user accounts.
   - `TasksRepository`: Abstracts database logic for task management.
-- **Advantages:**
-  - Centralized data access logic.
-  - Simplified testing by isolating database operations.
+
+#### Benefits:
+  - **Centralized Data Logic:** All database interactions are handled in repository classes, ensuring a clean separation of concerns.
+  - **Easier Data Source Configuration:** Switching or adding new data sources (e.g., from PostgreSQL to MySQL) requires minimal changes in the repository layer only.
+  - **Support for Multiple Data Sources:** Easily integrate and manage relational databases alongside external APIs or NoSQL databases.
+  - **Simplified Testing:** Mocking repositories during tests avoids the need for live database connections.
+  - **Reusability and Consistency:** Shared repository methods reduce duplication and streamline database operations.
 
 ## Configuration
 - Set environment variables in a `.env` file, including:
