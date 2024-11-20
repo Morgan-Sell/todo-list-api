@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, current_app, redirect, url_for
 from flask_login import LoginManager
 
 from src.controller.auth_controller import auth_blueprint
@@ -34,7 +34,7 @@ def root():
 
 @login_manager.user_loader
 def load_user(user_id):
-    session = SessionLocal()
+    session = current_app.session
     user_repo = UsersRepository(session)
     user = user_repo.find_user_by_id(user_id)
     session.close()

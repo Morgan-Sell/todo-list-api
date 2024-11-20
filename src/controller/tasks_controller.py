@@ -39,7 +39,7 @@ def add_task(user_id):
 
         # Use database connection that is currently being handled by the Flask app, i.e. test and prod
         session = current_app.session
-        task_repo = TasksRespository(session)    
+        task_repo = TasksRespository(session)
 
         task = Tasks(
             title=title, description=description, status=status, user_id=user_id
@@ -66,7 +66,7 @@ def edit_task(user_id):
         new_status = form.status.data or None  # Convert blank to None
 
         # Use database connection that is currently being handled by the Flask app, i.e. test and prod
-        session = current_app.session   
+        session = current_app.session
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
@@ -90,6 +90,11 @@ def edit_task(user_id):
         flash("Task successfully created.", "success")
         return redirect(url_for("tasks.view_tasks", user_id=user_id))
 
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"{field.capitalize()}: {error}", "danger")
+
     return render_template("edit_task.html", form=form, user_id=user_id)
 
 
@@ -106,7 +111,7 @@ def delete_task(user_id):
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
-
+        print("All IDs: ", all_ids)
         # Check if task belongs to the user
         if task_id not in all_ids:
             flash(
@@ -115,6 +120,11 @@ def delete_task(user_id):
             )
             session.close()
             return redirect(url_for("tasks.delete_task", user_id=user_id))
+
+        # Task exists and is to be deleted
+        task_repo.delete_task(task_id)
+        flash("Task successfully deleted.", "success")
+        return redirect(url_for("tasks.view_tasks", user_id=user_id))
 
     return render_template("delete_task.html", form=form, user_id=user_id)
 

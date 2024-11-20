@@ -113,7 +113,9 @@ def app(test_db):
     def load_user(user_id):
         session = current_app.session
         user_repo = UsersRepository(session)
-        return user_repo.find_user_by_id(user_id)
+        user = user_repo.find_user_by_id(user_id)
+        session.close()
+        return user
 
     # Register blueprints
     app.register_blueprint(auth_blueprint)
