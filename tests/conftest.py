@@ -1,5 +1,5 @@
 import pytest
-from flask import Flask
+from flask import Flask, current_app
 from flask.testing import FlaskClient
 from flask_login import AnonymousUserMixin, LoginManager
 from sqlalchemy import create_engine
@@ -111,7 +111,7 @@ def app(test_db):
     # Enable the loading of users during the test
     @login_manager.user_loader
     def load_user(user_id):
-        session = test_db
+        session = current_app.session
         user_repo = UsersRepository(session)
         return user_repo.find_user_by_id(user_id)
 

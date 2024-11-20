@@ -39,7 +39,7 @@ def add_task(user_id):
 
         # Use database connection that is currently being handled by the Flask app, i.e. test and prod
         session = current_app.session
-        task_repo = TasksRespository(session)
+        task_repo = TasksRespository(session)    
 
         task = Tasks(
             title=title, description=description, status=status, user_id=user_id
@@ -66,7 +66,7 @@ def edit_task(user_id):
         new_status = form.status.data or None  # Convert blank to None
 
         # Use database connection that is currently being handled by the Flask app, i.e. test and prod
-        session = current_app.session
+        session = current_app.session   
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
