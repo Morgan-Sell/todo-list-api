@@ -23,7 +23,6 @@ def view_tasks(user_id):
     task_repo = TasksRespository(session)
     tasks = task_repo.find_tasks_by_user(user_id)
     session.close()
-    print("Tasks:", tasks)
     return render_template("view_tasks.html", tasks=tasks)
 
 
@@ -111,7 +110,7 @@ def delete_task(user_id):
         task_repo = TasksRespository(session)
         tasks = task_repo.find_tasks_by_user(user_id)
         all_ids = [task.id for task in tasks]
-        print("All IDs: ", all_ids)
+
         # Check if task belongs to the user
         if task_id not in all_ids:
             flash(
